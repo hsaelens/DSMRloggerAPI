@@ -2,7 +2,7 @@
 ***************************************************************************
 **  Program  : DSMRloggerAPI (restAPI)
 */
-#define _FW_VERSION "v3.0.5 (18-03-2023)"
+#define _FW_VERSION "v3.0.5HS (14-09-2023)"
 /*
 **  Copyright (c) 2020, 2021, 2022, 2023 Willem Aandewiel
 **
@@ -54,7 +54,7 @@
 #define USE_LITTLEFS              // if not #defined: use SPIFFS
 #define USE_UPDATE_SERVER         // define if there is enough memory and updateServer to be used
 #define USE_MQTT                  // define if you want to use MQTT (configure through webinterface)
-#define USE_MINDERGAS             // define if you want to update mindergas (configure through webinterface)
+//#define USE_MINDERGAS             // define if you want to update mindergas (configure through webinterface)
 //  #define USE_SYSLOGGER             // define if you want to use the sysLog library for debugging
 //  #define SHOW_PASSWRDS             // well .. show the PSK key and MQTT password, what else?
 //  #define HAS_NO_SLIMMEMETER        // define for testing only!

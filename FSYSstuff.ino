@@ -102,7 +102,8 @@ void buildDataRecordFromSM(char *recIn)
            , (float)DSMRdata.energy_delivered_tariff2
            , (float)DSMRdata.energy_returned_tariff1
            , (float)DSMRdata.energy_returned_tariff2
-           , (float)gasDelivered);
+           , (float)gasDelivered
+           , (float)waterDelivered);
   // DATA + \n + \0
   fillRecord(record, DATA_RECLEN);
 
@@ -123,6 +124,7 @@ uint16_t buildDataRecordFromJson(char *recIn, String jsonIn)
   float     uERT1     = 0.0;
   float     uERT2     = 0.0;
   float     uGDT      = 0.0;
+  float     uWDT      = 0.0;
   uint16_t  recSlot;
 
   DebugTln(jsonIn);
@@ -141,6 +143,7 @@ uint16_t buildDataRecordFromJson(char *recIn, String jsonIn)
     if (wPair[0].indexOf("ert1")  == 0)  uERT1 = wPair[1].toFloat();
     if (wPair[0].indexOf("ert2")  == 0)  uERT2 = wPair[1].toFloat();
     if (wPair[0].indexOf("gdt")   == 0)  uGDT  = wPair[1].toFloat();
+    if (wPair[0].indexOf("wdt")   == 0)  uWDT  = wPair[1].toFloat();
   }
   strConcat(uKey, 15, "0101X");
   recSlot = timestampToMonthSlot(uKey, strlen(uKey));
@@ -150,7 +153,8 @@ uint16_t buildDataRecordFromJson(char *recIn, String jsonIn)
            , (float)uEDT2
            , (float)uERT1
            , (float)uERT2
-           , (float)uGDT);
+           , (float)uGDT
+           , (float)uWDT);
 
   // DATA + \n + \0
   fillRecord(record, DATA_RECLEN);
@@ -246,7 +250,7 @@ void readOneSlot(int8_t fileType, const char *fileName, uint8_t recNr
   uint16_t  slot, maxSlots = 0, offset;
   char      buffer[DATA_RECLEN +2] = "";
   char      recID[10]  = "";
-  float     EDT1, EDT2, ERT1, ERT2, GDT;
+  float     EDT1, EDT2, ERT1, ERT2, GDT, WDT;
 
   switch(fileType)
   {
@@ -294,9 +298,9 @@ void readOneSlot(int8_t fileType, const char *fileName, uint8_t recNr
     {
       if (doJson)
       {
-        sscanf(buffer, "%[^;];%f;%f;%f;%f;%f", recID
-               , &EDT1, &EDT2, &ERT1, &ERT2, &GDT);
-        sendNestedJsonObj(recNr++, recID, slot, EDT1, EDT2, ERT1, ERT2, GDT);
+        sscanf(buffer, "%[^;];%f;%f;%f;%f;%f;%f", recID
+               , &EDT1, &EDT2, &ERT1, &ERT2, &GDT, &WDT);
+        sendNestedJsonObj(recNr++, recID, slot, EDT1, EDT2, ERT1, ERT2, GDT, WDT);
 
       }
       else

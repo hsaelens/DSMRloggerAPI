@@ -130,6 +130,7 @@ void processSlimmemeter()
 
       //-- handle mbus delivered values
       gasDelivered = modifyMbusDelivered();
+      waterDelivered = modifyMbusDelivered_w();
 
       processTelegram();
       if (Verbose2)
@@ -167,6 +168,7 @@ void processSlimmemeter()
 //==================================================================================
 void modifySmFaseInfo()
 {
+  #if 0
   if (!settingSmHasFaseInfo)
   {
     if (DSMRdata.power_delivered_present && !DSMRdata.power_delivered_l1_present)
@@ -184,7 +186,7 @@ void modifySmFaseInfo()
       DSMRdata.power_returned_l3_present = true;
     }
   } // No Fase Info
-
+  #endif
 } //  modifySmFaseInfo()
 
 
@@ -220,7 +222,7 @@ float modifyMbusDelivered()
     tmpGasDelivered = (float)(DSMRdata.mbus2_delivered * 1.0);
     DebugTf("gasDelivered .. [%.3f]\r\n", tmpGasDelivered);
   }
-
+#if 0
   if (DSMRdata.mbus3_delivered_ntc_present)
     DSMRdata.mbus3_delivered = DSMRdata.mbus3_delivered_ntc;
   else if (DSMRdata.mbus3_delivered_dbl_present)
@@ -248,10 +250,39 @@ float modifyMbusDelivered()
     tmpGasDelivered = (float)(DSMRdata.mbus4_delivered * 1.0);
     DebugTf("gasDelivered .. [%.3f]\r\n", tmpGasDelivered);
   }
-
+#endif
   return tmpGasDelivered;
 
 } //  modifyMbusDelivered()
+float modifyMbusDelivered_w()
+{
+  float tmpWaterDelivered = 0;
+
+  if ( (settingMbus1Type == 7) && (DSMRdata.mbus1_device_type == 7) )
+  {
+    tmpWaterDelivered = (float)(DSMRdata.mbus1_delivered * 1.0);
+    DebugTf("waterDelivered .. [%.3f]\r\n", tmpWaterDelivered);
+  }
+
+  if ( (settingMbus2Type == 7) && (DSMRdata.mbus2_device_type == 7) )
+  {
+    tmpWaterDelivered = (float)(DSMRdata.mbus2_delivered * 1.0);
+    DebugTf("gasDelivered .. [%.3f]\r\n", tmpWaterDelivered);
+  }
+#if 0
+  if ( (settingMbus3Type == 7) && (DSMRdata.mbus3_device_type == 7) )
+  {
+    tmpWaterDelivered = (float)(DSMRdata.mbus3_delivered * 1.0);
+    DebugTf("waterDelivered .. [%.3f]\r\n", tmpWaterDelivered);
+  }
+  if ( (settingMbus4Type == 7) && (DSMRdata.mbus4_device_type == 7) )
+  {
+    tmpWaterDelivered = (float)(DSMRdata.mbus4_delivered * 1.0);
+    DebugTf("waterDelivered .. [%.3f]\r\n", tmpWaterDelivered);
+  }
+#endif
+  return tmpWaterDelivered;
+} //  modifyMbusDelivered_w()
 
 /***************************************************************************
 *

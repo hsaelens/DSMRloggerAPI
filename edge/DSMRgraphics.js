@@ -1,7 +1,7 @@
 /*
 ***************************************************************************  
 **  Program  : DSMRgraphics.js, part of DSMRloggerAPI
-**  Version  : v0.3.5
+**  Version  : v4.3.0
 **
 **  Copyright (c) 2020 Willem Aandewiel
 **
@@ -14,6 +14,7 @@ let actPoint        = 0;
 let maxPoints       = 100;
 var actLabel        = "-";
 var gasDelivered    = 0;
+var waterDelivered  = 0;
 
 var electrData          = {};     // declare an object
 electrData.labels       = [];     //  add 'labels' element to object (X axis)
@@ -27,6 +28,9 @@ var actGasData          = {};     // declare an object
 actGasData.labels       = [];     //  add 'labels' element to object (X axis)
 actGasData.datasets     = [];     //  add 'datasets' array element to object
 
+var actWaterData          = {};     // declare an object
+actWaterData.labels       = [];     //  add 'labels' element to object (X axis)
+actWaterData.datasets     = [];     //  add 'datasets' array element to object
 
 var actElectrOptions = {
         responsive: true,
@@ -95,6 +99,7 @@ var monthOptions = {
 //----------------Chart's-------------------------------------------------------
 var myElectrChart;
 var myGasChart;
+var myWaterChart;
 
   //============================================================================  
   function renderElectrChart(dataSet, options) {
@@ -113,6 +118,37 @@ var myGasChart;
     
   } // renderElectrChart()
 
+  //============================================================================  
+  function renderWaterChart(dataSet, labelString) {
+    //console.log("Now in renderWaterChart() ..");
+
+    if (myWaterChart) {
+      myWaterChart.destroy();
+    }
+
+    var ctxWater = document.getElementById("waterChart").getContext("2d");
+    myWaterChart = new Chart(ctxWater, {
+      type: 'line',
+      data: dataSet,
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        scales: {
+          yAxes: [{
+            ticks : {
+              beginAtZero : true,
+            },
+            scaleLabel: {
+              display: true,
+              labelString: labelString,
+            },
+          }]
+        } // scales
+      } // options
+
+    });
+
+  } // renderWaterChart()
   //============================================================================  
   function renderGasChart(dataSet, labelString) {
     //console.log("Now in renderGasChart() ..");
@@ -144,7 +180,7 @@ var myGasChart;
     });
     
   } // renderGasChart()
-  
+
   
   //============================================================================  
   function showHistGraph(data, type)
@@ -160,6 +196,9 @@ var myGasChart;
     renderGasChart(gasData, "dm3");
     myGasChart.update();
   
+        renderWaterChart(waterData, "dm3");
+    	myWaterChart.update();
+		document.getElementById("waterChart").style.display = "block";
     //--- hide table
     document.getElementById("lastHours").style.display  = "none";
     document.getElementById("lastDays").style.display   = "none";
@@ -181,6 +220,9 @@ var myGasChart;
     //renderGasChart(gasData, actGasOptions);
     renderGasChart(gasData, "m3");
     myGasChart.update();
+		renderWaterChart(waterData, "m3");
+		myWaterChart.update();
+		document.getElementById("waterChart").style.display = "block";
   
     //--- hide table
     document.getElementById("lastHours").style.display  = "none";
@@ -209,7 +251,12 @@ var myGasChart;
     gasData.labels      = [];     // empty .labels
     gasData.stack       = [];     // empty .stack
     gasData.datasets    = [];     // empty .datasets
-    
+
+    waterData       = {};     // empty waterData
+    waterData.labels      = [];     // empty .labels
+    waterData.stack       = [];     // empty .stack
+    waterData.datasets    = [];     // empty .datasets
+
     // idx 0 => ED
     electrData.datasets.push({}); //create a new dataset
     electrData.datasets[0].fill            = 'false';
@@ -234,13 +281,22 @@ var myGasChart;
     gasData.datasets[0].backgroundColor    = "blue";
     gasData.datasets[0].data               = []; //contains the 'Y; axis data
     gasData.datasets[0].label              = "Gas Gebruikt"; //"S"+s; //contains the 'Y; axis label
-    
+ 
+ // idx 0 => WATER
+    waterData.datasets.push({}); //create a new dataset
+    waterData.datasets[0].fill               = 'false';
+    waterData.datasets[0].borderColor        = "blue";
+    waterData.datasets[0].backgroundColor    = "blue";
+    waterData.datasets[0].data               = []; //contains the 'Y; axis data
+    waterData.datasets[0].label              = "Water Gebruikt"; //"S"+s; //contains the 'Y; axis label
+
     for(let i=(data.length -2); i>=0; i--)
     {
       let y = (data.length -2) - i;
       //console.log("["+i+"] label["+data[i].recid+"] => y["+y+"]");
       electrData.labels.push(formatGraphDate(type, data[i].recid)); // adds x axis labels (timestamp)
       gasData.labels.push(formatGraphDate(type, data[i].recid)); // adds x axis labels (timestamp)
+      waterData.labels.push(formatGraphDate(type, data[i].recid)); // adds x axis labels (timestamp)
       if (type == "Hours")
       {
         if (data[i].p_edw >= 0) electrData.datasets[0].data[y]  = (data[i].p_edw *  1.0);
@@ -252,7 +308,7 @@ var myGasChart;
         if (data[i].p_er >= 0) electrData.datasets[1].data[y]  = (data[i].p_er * -1.0).toFixed(3);
       }
       if (data[i].p_gd  >= 0) gasData.datasets[0].data[y]     = (data[i].p_gd * 1000.0).toFixed(0);
-
+      if (data[i].p_wd  >= 0) waterData.datasets[0].data[y]   = (data[i].p_wd* 1000.0).toFixed(0);
     } // for i ..
 
   } // copyDataToChart()
@@ -268,11 +324,16 @@ var myGasChart;
     electrData.stack    = [];     // empty .stack
     electrData.datasets = [];     // empty .datasets
     
-    gasData       = {};     // empty electrData
+    gasData       = {};     // empty gasData
     gasData.labels      = [];     // empty .labels
     gasData.stack       = [];     // empty .stack
     gasData.datasets    = [];     // empty .datasets
-    
+
+    waterData       = {};     // empty waterData
+    waterData.labels      = [];     // empty .labels
+    waterData.stack       = [];     // empty .stack
+    waterData.datasets    = [];     // empty .datasets
+
     // idx 0 => ED
     electrData.datasets.push({}); //create a new dataset
     electrData.datasets[0].fill            = 'false';
@@ -319,6 +380,20 @@ var myGasChart;
     gasData.datasets[1].backgroundColor = "lightblue";
     gasData.datasets[1].data            = []; //contains the 'Y; axis data
     gasData.datasets[1].label           = "Gas vorige Periode"; //"S"+s; //contains the 'Y; axis label
+    // idx 0 => WATER
+    waterData.datasets.push({}); //create a new dataset
+    waterData.datasets[0].fill            = 'false';
+    waterData.datasets[0].borderColor     = "blue";
+    waterData.datasets[0].backgroundColor = "blue";
+    waterData.datasets[0].data            = []; //contains the 'Y; axis data
+    waterData.datasets[0].label           = "Water deze Periode"; //"S"+s; //contains the 'Y; axis label
+    // idx 0 => WATER -1    
+    waterData.datasets.push({}); //create a new dataset
+    waterData.datasets[1].fill            = 'false';
+    waterData.datasets[1].borderColor     = "lightblue";
+    waterData.datasets[1].backgroundColor = "lightblue";
+    waterData.datasets[1].data            = []; //contains the 'Y; axis data
+    waterData.datasets[1].label           = "Water vorige Periode"; //"S"+s; //contains the 'Y; axis label
     
     //console.log("there are ["+data.length+"] rows");
     var showRows = 0;
@@ -331,6 +406,7 @@ var myGasChart;
       let y = i +12;
       electrData.labels.push(formatGraphDate("Months", data[i].recid)); // adds x axis labels (timestamp)
       gasData.labels.push(formatGraphDate("Months", data[i].recid)); // adds x axis labels (timestamp)
+      waterData.labels.push(formatGraphDate("Months", data[i].recid)); // adds x axis labels (timestamp)
       //electrData.labels.push(p); // adds x axis labels (timestamp)
       if (data[i].p_ed >= 0) electrData.datasets[0].data[p]  = (data[i].p_ed *  1.0).toFixed(3);
       if (data[i].p_er >= 0) electrData.datasets[1].data[p]  = (data[i].p_er * -1.0).toFixed(3);
@@ -338,6 +414,8 @@ var myGasChart;
       if (data[y].p_er >= 0) electrData.datasets[3].data[p]  = (data[y].p_er * -1.0).toFixed(3);
       if (data[i].p_gd >= 0) gasData.datasets[0].data[p]     = data[i].p_gd;
       if (data[y].p_gd >= 0) gasData.datasets[1].data[p]     = data[y].p_gd;
+      if (data[i].p_wd >= 0) waterData.datasets[0].data[p]   = data[i].p_wd;
+      if (data[y].p_wd >= 0) waterData.datasets[1].data[p]   = data[y].p_wd;
       p++;
     }
     //--- hide months Table
@@ -345,6 +423,7 @@ var myGasChart;
     //--- show canvas
     document.getElementById("dataChart").style.display  = "block";
     document.getElementById("gasChart").style.display   = "block";
+    document.getElementById("waterChart").style.display   = "block";
 
   } // copyMonthsToChart()
     
@@ -367,6 +446,7 @@ var myGasChart;
         }
         actElectrData.labels.push(formatGraphDate("Actual", data[i].value)); // adds x axis labels (timestamp)
         actGasData.labels.push(formatGraphDate("Actual", data[i].value)); // adds x axis labels (timestamp)
+        actWaterData.labels.push(formatGraphDate("Actual", data[i].value)); // adds x axis labels (timestamp)
         actLabel = data[i].value;
       }
       
@@ -389,6 +469,14 @@ var myGasChart;
         else  actGasData.datasets[0].data[actPoint] = 0.0;
         gasDelivered = data[i].value;
       }
+      if (data[i].name == "water_delivered")
+      {
+        if (actPoint > 0)
+              actWaterData.datasets[0].data[actPoint] = ((data[i].value - waterDelivered) * 1000.0).toFixed(0);
+        else  actWaterData.datasets[0].data[actPoint] = 0.0;
+        waterDelivered = data[i].value;
+      }
+
     } // for i in data ..
     actPoint++;    
     
@@ -405,6 +493,8 @@ var myGasChart;
         actElectrData.datasets[5].data.shift();
         actGasData.labels.shift();
         actGasData.datasets[0].data.shift();
+        actWaterData.labels.shift();
+        actWaterData.datasets[0].data.shift();
         actPoint--;
       } // for s ..
     } 
@@ -422,11 +512,16 @@ var myGasChart;
     actElectrData.stack    = [];     // empty .stack
     actElectrData.datasets = [];     // empty .datasets
 
-    actGasData     = {};     // empty actElectrData
+    actGasData     = {};     // empty actGasData
     actGasData.labels   = [];     // empty .labels
     actGasData.stack    = [];     // empty .stack
     actGasData.datasets = [];     // empty .datasets
-    
+
+    actWaterData     = {};     // empty actWaterData
+    actWaterData.labels   = [];     // empty .labels
+    actWaterData.stack    = [];     // empty .stack
+    actWaterData.datasets = [];     // empty .datasets
+
     // idx 0 => EDL1
     actElectrData.datasets.push({}); //create a new dataset
     actElectrData.datasets[0].fill            = 'false';
@@ -489,6 +584,14 @@ var myGasChart;
     actGasData.datasets[0].data            = []; //contains the 'Y; axis data
     actGasData.datasets[0].label           = "Gas Verbruikt"; //"S"+s; //contains the 'Y; axis label
 
+        // idx 0 => WDT
+    actWaterData.datasets.push({}); //create a new dataset
+    actWaterData.datasets[0].fill            = 'false';
+    actWaterData.datasets[0].borderColor     = "blue";
+    actWaterData.datasets[0].backgroundColor = "blue";
+    actWaterData.datasets[0].data            = []; //contains the 'Y; axis data
+    actWaterData.datasets[0].label           = "Water Verbruikt"; //"S"+s; //contains the 'Y; axis label
+
     actPoint = 0;
   
   } // initActualGraph()
@@ -506,13 +609,16 @@ var myGasChart;
     //--- show canvas
     document.getElementById("dataChart").style.display = "block";
     document.getElementById("gasChart").style.display  = "block";
+    document.getElementById("waterChart").style.display  = "block";
     
     renderElectrChart(actElectrData, actElectrOptions);
     myElectrChart.update();
     
     //renderGasChart(actGasData, actGasOptions);
     renderGasChart(actGasData, "dm3");
+    renderWaterChart(actWaterData, "dm3");
     gasChart.update();
+    waterChart.update();
 
   } // showActualGraph()
   

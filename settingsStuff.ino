@@ -67,11 +67,17 @@ void writeSettings()
   file.print("GASDeliveredT = ");
   file.println(String(settingGDT,  5));
   Debug(F("."));
+  file.print("WaterDeliveredT = ");
+  file.println(String(settingWDT,  5));
+  Debug(F("."));
   file.print("EnergyVasteKosten = ");
   file.println(String(settingENBK, 2));
   Debug(F("."));
   file.print("GasVasteKosten = ");
   file.println(String(settingGNBK, 2));
+  Debug(F("."));
+  file.print("WaterVasteKosten = ");
+  file.println(String(settingWNBK, 2));
   Debug(F("."));
   file.print("OledType = ");
   file.println(settingOledType);
@@ -145,10 +151,14 @@ void writeSettings()
     Debugln(settingMbus4Type);
     DebugT(F("GASDeliveredT = "));
     Debugln(String(settingGDT,  5));
+    DebugT(F("WATERDeliveredT = "));
+    Debugln(String(settingWDT,  5));
     DebugT(F("EnergyVasteKosten = "));
     Debugln(String(settingENBK, 2));
     DebugT(F("GasVasteKosten = "));
     Debugln(String(settingGNBK, 2));
+    DebugT(F("WaterVasteKosten = "));
+    Debugln(String(settingWNBK, 2));
     DebugT(F("OledType = "));
     if (settingOledType == 1)          Debugln("SDD1306");
     else if (settingOledType == 2)     Debugln("SH1306");
@@ -221,8 +231,10 @@ void readSettings(bool show)
   settingERT1               = 0.3;
   settingERT2               = 0.4;
   settingGDT                = 0.5;
+  settingWDT                = 0.6;
   settingENBK               = 15.15;
   settingGNBK               = 11.11;
+  settingWNBK               = 12.12;
   settingSmHasFaseInfo      =  1; // default: it does
   settingTelegramInterval   = 10; // seconds
   settingOledType           =  1; // 0=None, 1=SDD1306, 2=SH1106
@@ -279,8 +291,10 @@ void readSettings(bool show)
     if (words[0].equalsIgnoreCase("mBus3Type"))           settingMbus3Type    = words[1].toInt();
     if (words[0].equalsIgnoreCase("mBus4Type"))           settingMbus4Type    = words[1].toInt();
     if (words[0].equalsIgnoreCase("GasDeliveredT"))       settingGDT          = strToFloat(words[1].c_str(), 5);
+    if (words[0].equalsIgnoreCase("WaterDeliveredT"))     settingWDT          = strToFloat(words[1].c_str(), 5);
     if (words[0].equalsIgnoreCase("EnergyVasteKosten"))   settingENBK         = strToFloat(words[1].c_str(), 2);
     if (words[0].equalsIgnoreCase("GasVasteKosten"))      settingGNBK         = strToFloat(words[1].c_str(), 2);
+    if (words[0].equalsIgnoreCase("WaterVasteKosten"))    settingWNBK         = strToFloat(words[1].c_str(), 2);
     if (words[0].equalsIgnoreCase("SmHasFaseInfo"))
     {
       settingSmHasFaseInfo = words[1].toInt();
@@ -356,8 +370,10 @@ void readSettings(bool show)
   Debugf("   Energy Delivered Tarief 1 : %9.7f\r\n",  settingERT1);
   Debugf("   Energy Delivered Tarief 2 : %9.7f\r\n",  settingERT2);
   Debugf("        Gas Delivered Tarief : %9.7f\r\n",  settingGDT);
+  Debugf("      Water Delivered Tarief : %9.7f\r\n",  settingWDT);
   Debugf("     Energy Netbeheer Kosten : %9.2f\r\n",  settingENBK);
   Debugf("        Gas Netbeheer Kosten : %9.2f\r\n",  settingGNBK);
+  Debugf("      Water Netbeheer Kosten : %9.2f\r\n",  settingWNBK);
   Debugf("                 MBus 1 Type : %d\r\n",     settingMbus1Type);
   Debugf("                 MBus 2 Type : %d\r\n",     settingMbus2Type);
   Debugf("                 MBus 3 Type : %d\r\n",     settingMbus3Type);
@@ -425,6 +441,8 @@ void updateSetting(const char *field, const char *newValue)
   if (!stricmp(field, "mbus4_type"))        settingMbus4Type    = String(newValue).toInt();
   if (!stricmp(field, "gd_tariff"))         settingGDT          = String(newValue).toFloat();
   if (!stricmp(field, "gas_netw_costs"))    settingGNBK         = String(newValue).toFloat();
+  if (!stricmp(field, "wd_tariff"))         settingWDT          = String(newValue).toFloat();
+  if (!stricmp(field, "water_netw_costs"))  settingWNBK         = String(newValue).toFloat();
 
   if (!stricmp(field, "sm_has_fase_info"))
   {

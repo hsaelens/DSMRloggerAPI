@@ -165,6 +165,7 @@ void handleTestdata()
   }
 
   gasDelivered = modifyMbusDelivered();
+  waterDelivered = modifyMbusDelivered_w();
   modifySmFaseInfo();
 
   processTelegram();

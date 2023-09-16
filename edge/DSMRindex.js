@@ -32,8 +32,10 @@
   var er_tariff1            = 0;
   var er_tariff2            = 0;
   var gd_tariff             = 0;
+  var wd_tariff             = 0;
   var electr_netw_costs     = 0;
   var gas_netw_costs        = 0;
+  var water_netw_costs      = 0;
   var hostName              =  "-";
   var pre_dsmr40            = 0;
   var dailyreboot           = 0;
@@ -163,6 +165,7 @@
     //--- hide canvas -------
     document.getElementById("dataChart").style.display = "none";
     document.getElementById("gasChart").style.display  = "none";
+	document.getElementById("waterChart").style.display  = "none";
     //--- hide all tab's -------
     x = document.getElementsByClassName("tabName");
     for (i = 0; i < x.length; i++) {
@@ -583,6 +586,7 @@
         data[i].ert1 = data[i+1].ert1 * 1.0;
         data[i].ert2 = data[i+1].ert2 * 1.0;
         data[i].gdt  = data[i+1].gdt  * 1.0;
+        data[i].wdt  = data[i+1].wdt  * 1.0;
       }
     } // for ...
     }
@@ -594,6 +598,7 @@
       data[i].p_er      = {};
       data[i].p_erw     = {};
       data[i].p_gd      = {};
+      data[i].p_wd      = {};
       data[i].costs_e   = {};
       data[i].costs_g   = {};
       data[i].costs_nw  = {};
@@ -606,6 +611,7 @@
         data[i].p_er  = ((data[i].ert1 +data[i].ert2)-(data[i+1].ert1 +data[i+1].ert2)).toFixed(3);
         data[i].p_erw = (data[i].p_er * 1000).toFixed(0);
         data[i].p_gd  = (data[i].gdt  -data[i+1].gdt).toFixed(3);
+        data[i].p_wd  = (data[i].wdt  -data[i+1].wdt).toFixed(3);
         //-- calculate Energy Delivered costs
         costs = ( (data[i].edt1 - data[i+1].edt1) * ed_tariff1 );
         costs = costs + ( (data[i].edt2 - data[i+1].edt2) * ed_tariff2 );
@@ -615,10 +621,12 @@
         data[i].costs_e = costs;
         //-- add Gas Delivered costs
         data[i].costs_g = ( (data[i].gdt  - data[i+1].gdt)  * gd_tariff );
+        //-- add Water Delivered costs
+        data[i].costs_w = ( (data[i].wdt  - data[i+1].wdt)  * wd_tariff );
         //-- compute network costs
-        data[i].costs_nw = (electr_netw_costs + gas_netw_costs);
+        data[i].costs_nw = (electr_netw_costs + gas_netw_costs + water_netw_costs);
         //-- compute total costs
-        data[i].costs_tt = ( (data[i].costs_e + data[i].costs_g + data[i].costs_nw) * 1.0);
+        data[i].costs_tt = ( (data[i].costs_e + data[i].costs_g + data[i].costs_w + data[i].costs_nw) * 1.0);
       }
       else
       {
@@ -628,8 +636,10 @@
         data[i].p_er      = (data[i].ert1 +data[i].ert2).toFixed(3);
         data[i].p_erw     = (data[i].p_er * 1000).toFixed(0);
         data[i].p_gd      = (data[i].gdt).toFixed(3);
+        data[i].p_wd      = (data[i].wdt).toFixed(3);
         data[i].costs_e   = 0.0;
         data[i].costs_g   = 0.0;
+        data[i].costs_w   = 0.0;
         data[i].costs_nw  = 0.0;
         data[i].costs_tt  = 0.0;
       }
@@ -708,9 +718,11 @@
         newCell.appendChild(newText);
         newCell  = newRow.insertCell(3);
         newCell.appendChild(newText);
+		newCell  = newRow.insertCell(4);
+        newCell.appendChild(newText);
         if (type == "Days")
         {
-          newCell  = newRow.insertCell(4);
+          newCell  = newRow.insertCell(5);
           newCell.appendChild(newText);
         }
       }
@@ -730,16 +742,21 @@
       if (data[i].p_gd >= 0)
             tableCells[3].innerHTML = data[i].p_gd;
       else  tableCells[3].innerHTML = "-";
+      tableCells[4].style.textAlign = "right";
+      if (data[i].p_wd >= 0)
+            tableCells[4].innerHTML = data[i].p_wd;
+      else  tableCells[4].innerHTML = "-";
       if (type == "Days")
       {
-        tableCells[4].style.textAlign = "right";
-        tableCells[4].innerHTML = ( (data[i].costs_e + data[i].costs_g) * 1.0).toFixed(2);
+        tableCells[5].style.textAlign = "right";
+        tableCells[5].innerHTML = ( (data[i].costs_e + data[i].costs_g) * 1.0).toFixed(2);
       }
     };
 
     //--- hide canvas
     document.getElementById("dataChart").style.display = "none";
     document.getElementById("gasChart").style.display  = "none";
+	document.getElementById("waterChart").style.display  = "none";
     //--- show table
     document.getElementById("lastHours").style.display = "block";
     document.getElementById("lastDays").style.display  = "block";
@@ -793,6 +810,15 @@
         newCell.appendChild(newText);
         newCell  = newRow.insertCell(12);             // gas
         newCell.appendChild(newText);
+
+        newCell  = newRow.insertCell(13);             // jaar
+        newCell.appendChild(newText);
+        newCell  = newRow.insertCell(14);             // water
+        newCell.appendChild(newText);
+        newCell  = newRow.insertCell(15);             // jaar
+        newCell.appendChild(newText);
+        newCell  = newRow.insertCell(16);             // water
+        newCell.appendChild(newText);
       }
       var mmNr = parseInt(data[i].recid.substring(2,4), 10);
 
@@ -839,11 +865,25 @@
             tableCells[12].innerHTML = data[i+12].p_gd;                     // gas
       else  tableCells[12].innerHTML = "-";     
 
+      tableCells[13].style.textAlign = "center";
+      tableCells[13].innerHTML = "20"+data[i].recid.substring(0,2);          // jaar
+      tableCells[14].style.textAlign = "right";
+      if (data[i].p_wd >= 0)
+            tableCells[14].innerHTML = data[i].p_wd;                        // water
+      else  tableCells[14].innerHTML = "-";     
+      tableCells[15].style.textAlign = "center";
+      tableCells[15].innerHTML = "20"+data[i+12].recid.substring(0,2);      // jaar
+      tableCells[16].style.textAlign = "right";
+      if (data[i+16].p_wd >= 0)
+            tableCells[16].innerHTML = data[i+12].p_wd;                     // water
+      else  tableCells[16].innerHTML = "-";     
+
     };
     
     //--- hide canvas
     document.getElementById("dataChart").style.display  = "none";
     document.getElementById("gasChart").style.display   = "none";
+	document.getElementById("waterChart").style.display   = "none";
     //--- show table
     document.getElementById("lastMonths").style.display = "block";
 
@@ -965,6 +1005,7 @@
     //--- hide canvas
     document.getElementById("dataChart").style.display  = "none";
     document.getElementById("gasChart").style.display   = "none";
+	document.getElementById("waterChart").style.display   = "none";
     //--- show table
     if (document.getElementById('mCOST').checked)
     {
@@ -1009,6 +1050,10 @@
             {
               gd_tariff = json.settings[i].value;
             }
+            else if (json.settings[i].name == "wd_tariff")
+            {
+              wd_tariff = json.settings[i].value;
+            }
             else if (json.settings[i].name == "electr_netw_costs")
             {
               electr_netw_costs = json.settings[i].value;
@@ -1016,6 +1061,10 @@
             else if (json.settings[i].name == "gas_netw_costs")
             {
               gas_netw_costs = json.settings[i].value;
+            }
+            else if (json.settings[i].name == "water_netw_costs")
+            {
+              water_netw_costs = json.settings[i].value;
             }
             else if (json.settings[i].name == "mbus_nr_gas")
             {
@@ -1372,7 +1421,12 @@ http://DSMR-API.local/api/v1/dev/settings</pre>", false);
                 sInput.addEventListener('change',
                     function() { setNewValue(i, "gdt", "em_in1_"+i); }, false);
               }
-              
+              else if (type == "WD")
+              {
+                sInput.addEventListener('change',
+                    function() { setNewValue(i, "wdt", "em_in1_"+i); }, false);
+              }
+
               span2.appendChild(sInput);
               //--- if not GD create input for data column 2
               if (type == "ED")
@@ -1429,7 +1483,11 @@ http://DSMR-API.local/api/v1/dev/settings</pre>", false);
         document.getElementById("em_in1_"+i).style.background = "white";
         document.getElementById("em_in1_"+i).value = (data[i].gdt *1).toFixed(3);
       }
-      
+      else if (type == "WD")
+      {
+        document.getElementById("em_in1_"+i).style.background = "white";
+        document.getElementById("em_in1_"+i).value = (data[i].wdt *1).toFixed(3);
+      }
     } // for all elements in data
     
     console.log("Now sequence EEYY/MM values ..(data.length="+data.length+")");
@@ -1571,7 +1629,7 @@ http://DSMR-API.local/api/v1/dev/settings</pre>", false);
         changes = true;
         document.getElementById("em_in1_"+i).style.background = 'white';
       }
-      if (monthType != "GD")
+      if ((monthType != "GD") && (monthType != "WD"))
       {
         if (document.getElementById("em_in2_"+i).style.background == 'lightgray')
         {
@@ -1722,7 +1780,18 @@ http://DSMR-API.local/api/v1/dev/settings</pre>", false);
           withErrors = true;
         }
       }
-      
+      else if (type == "WD")
+      {
+        if (getBackGround("em_in1_"+(i+1)) == "red")
+        {
+          setBackGround("em_in1_"+(i+1), "lightgray");
+        }
+        if (data[i].wdt < data[i+1].wdt)
+        {
+          setBackGround("em_in1_"+(i+1), "red");
+          withErrors = true;
+        }
+      }
     }
     if (withErrors)  return false;
 
@@ -1750,7 +1819,7 @@ http://DSMR-API.local/api/v1/dev/settings</pre>", false);
     console.log("send["+i+"] => ["+recId+"]");
     
     const jsonString = {"recid": recId, "edt1": row[i].edt1, "edt2": row[i].edt2,
-                         "ert1": row[i].ert1,  "ert2": row[i].ert2, "gdt":  row[i].gdt };
+                         "ert1": row[i].ert1,  "ert2": row[i].ert2, "gdt":  row[i].gdt, "wdt":  row[i].wdt  };
 
     const other_params = {
         headers : { "content-type" : "application/json; charset=UTF-8"},
@@ -1828,6 +1897,11 @@ http://DSMR-API.local/api/v1/dev/settings</pre>", false);
       monthType = eType;
       getMonths()
       showMonths(data, monthType);
+    } else if (eType == "WD") {
+      console.log("Edit Water Delivered!");
+      monthType = eType;
+      getMonths()
+      showMonths(data, monthType);
     } else {
       console.log("setEditType to ["+eType+"] is quit shitty!");
       monthType = "";
@@ -1847,6 +1921,7 @@ http://DSMR-API.local/api/v1/dev/settings</pre>", false);
     else if (dField == "ert1")  data[i].ert1 = document.getElementById(field).value;
     else if (dField == "ert2")  data[i].ert2 = document.getElementById(field).value;
     else if (dField == "gdt")   data[i].gdt  = document.getElementById(field).value;
+    else if (dField == "wdt")   data[i].wdt  = document.getElementById(field).value;
     
   } // setNewValue()
 
@@ -1966,13 +2041,13 @@ http://DSMR-API.local/api/v1/dev/settings</pre>", false);
           ,[ "identification",            "Slimme Meter ID" ]
           ,[ "p1_version",                "P1 Versie" ]
           ,[ "p1_version_be",             "P1 Versie (BE)" ]
-          ,[ "energy_delivered_tariff1",  "Energie Gebruikt tarief 1" ]
-          ,[ "energy_delivered_tariff2",  "Energie Gebruikt tarief 2" ]
-          ,[ "energy_returned_tariff1",   "Energie Opgewekt tarief 1" ]
-          ,[ "energy_returned_tariff2",   "Energie Opgewekt tarief 2" ]
+          ,[ "energy_delivered_tariff1",  "Energie Afgenomen teller 1" ]
+          ,[ "energy_delivered_tariff2",  "Energie Afgenomen teller 2" ]
+          ,[ "energy_returned_tariff1",   "Energie Teruggeleverd teller 1" ]
+          ,[ "energy_returned_tariff2",   "Energie Teruggeleverd teller 2" ]
           ,[ "electricity_tariff",        "Electriciteit tarief" ]
-          ,[ "power_delivered",           "Vermogen Gebruikt" ]
-          ,[ "power_returned",            "Vermogen Opgewekt" ]
+          ,[ "power_delivered",           "Vermogen Afgenomen" ]
+          ,[ "power_returned",            "Vermogen Teruggeleverd" ]
           ,[ "electricity_threshold",     "Electricity Threshold" ]
           ,[ "electricity_switch_position","Electricity Switch Position" ]
           ,[ "electricity_failures",      "Electricity Failures" ]
@@ -1986,18 +2061,18 @@ http://DSMR-API.local/api/v1/dev/settings</pre>", false);
           ,[ "electricity_swells_l3",     "Electricity Swells l3" ]
           ,[ "message_short",             "Korte Boodschap" ]
           ,[ "message_long",              "Lange Boodschap" ]
-          ,[ "voltage_l1",                "Voltage l1" ]
-          ,[ "voltage_l2",                "Voltage l2" ]
-          ,[ "voltage_l3",                "Voltage l3" ]
-          ,[ "current_l1",                "Current l1" ]
-          ,[ "current_l2",                "Current l2" ]
-          ,[ "current_l3",                "Current l3" ]
-          ,[ "power_delivered_l1",        "Vermogen Gebruikt l1" ]
-          ,[ "power_delivered_l2",        "Vermogen Gebruikt l2" ]
-          ,[ "power_delivered_l3",        "Vermogen Gebruikt l3" ]
-          ,[ "power_returned_l1",         "Vermogen Opgewekt l1" ]
-          ,[ "power_returned_l2",         "Vermogen Opgewekt l2" ]
-          ,[ "power_returned_l3",         "Vermogen Opgewekt l3" ]
+          ,[ "voltage_l1",                "Spanning l1" ]
+          ,[ "voltage_l2",                "Spanning l2" ]
+          ,[ "voltage_l3",                "Spanning l3" ]
+          ,[ "current_l1",                "Stroom l1" ]
+          ,[ "current_l2",                "Stroom l2" ]
+          ,[ "current_l3",                "Stroom l3" ]
+          ,[ "power_delivered_l1",        "Vermogen Afgenomen l1" ]
+          ,[ "power_delivered_l2",        "Vermogen Afgenomen l2" ]
+          ,[ "power_delivered_l3",        "Vermogen Afgenomen l3" ]
+          ,[ "power_returned_l1",         "Vermogen Teruggeleverd l1" ]
+          ,[ "power_returned_l2",         "Vermogen Teruggeleverd l2" ]
+          ,[ "power_returned_l3",         "Vermogen Teruggeleverd l3" ]
           ,[ "mbus1_type",                "MBus-1 Type meter (0=geen)" ]
           ,[ "mbus1_device_type",         "MBus-1 Type meter (0=geen)" ]
           ,[ "mbus1_equipment_id_tc",     "MBus-1 Equipm. ID (tc)" ]
@@ -2036,9 +2111,10 @@ http://DSMR-API.local/api/v1/dev/settings</pre>", false);
           ,[ "er_tariff1",                "Energy Opgewekt Tarief-1/kWh" ]
           ,[ "er_tariff2",                "Energy Opgewekt Tarief-2/kWh" ]
           ,[ "gd_tariff" ,                "Gas Verbruik Tarief/m3" ]
+          ,[ "wd_tariff" ,                "Water Verbruik Tarief/m3" ]
           ,[ "electr_netw_costs",         "Netwerkkosten Energie/maand" ]
           ,[ "gas_netw_costs",            "Netwerkkosten Gas/maand" ]
-          
+          ,[ "water_netw_costs",          "Netwerkkosten Water/maand" ]
           ,[ "smhasfaseinfo",             "SM Has Fase Info (0=No, 1=Yes)" ]
           ,[ "sm_has_fase_info",          "SM Has Fase Info (0=No, 1=Yes)" ]
           ,[ "pre_dsmr40",                "Pré DSMR 40 (0=No, 1=Yes)" ]
@@ -2061,7 +2137,7 @@ http://DSMR-API.local/api/v1/dev/settings</pre>", false);
           ,[ "mqtt_toptopic",             "MQTT Top Topic" ]
           ,[ "mqttinterval",              "Verzend MQTT Berichten (Sec.)" ]
           ,[ "mqtt_interval",             "Verzend MQTT Berichten (Sec.)" ]
-          ,[ "mqttbroker_connected",      "MQTT broker connected" ]
+          ,[ "mqttbroker_connected",      "MQTT broker verbonden" ]
           ,[ "mindergas_token",           "Mindergas Token" ]
           ,[ "mindergas_response",        "Mindergas Terugkoppeling" ]
           ,[ "mindergas_status",          "Mindergas Status (@dag | tijd)" ]
@@ -2088,7 +2164,7 @@ http://DSMR-API.local/api/v1/dev/settings</pre>", false);
           ,[ "spiffssize",                "SPIFFS Size" ]
           ,[ "flashchipspeed",            "Flash Chip Speed" ]
           ,[ "flashchipmode",             "Flash Chip Mode" ]
-          ,[ "boardtype",                 "Board Type" ]
+          ,[ "boardtype",                 "Bord Type" ]
           ,[ "compileoptions",            "Compiler Opties" ]
           ,[ "ssid",                      "WiFi SSID" ]
           ,[ "wifirssi",                  "WiFi RSSI" ]

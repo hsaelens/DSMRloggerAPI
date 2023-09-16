@@ -479,8 +479,10 @@ void sendDeviceSettings()
   sendJsonSettingObj("er_tariff1",        settingERT1,            "f", 0, 10,  5);
   sendJsonSettingObj("er_tariff2",        settingERT2,            "f", 0, 10,  5);
   sendJsonSettingObj("gd_tariff",         settingGDT,             "f", 0, 10,  5);
+  sendJsonSettingObj("wd_tariff",         settingWDT,             "f", 0, 10,  5);
   sendJsonSettingObj("electr_netw_costs", settingENBK,            "f", 0, 100, 2);
   sendJsonSettingObj("gas_netw_costs",    settingGNBK,            "f", 0, 100, 2);
+  sendJsonSettingObj("water_netw_costs",  settingWNBK,            "f", 0, 100, 2);
   sendJsonSettingObj("mbus1_type",        settingMbus1Type,       "i", 0, 200);
   sendJsonSettingObj("mbus2_type",        settingMbus2Type,       "i", 0, 200);
   sendJsonSettingObj("mbus3_type",        settingMbus3Type,       "i", 0, 200);
@@ -573,6 +575,7 @@ void sendJsonV0Fields()
   httpServer.send(200, "application/json", "{\r\n");
   DSMRdata.applyEach(buildJsonV0ApiSmActual());
   sendNestedJsonV0Obj("gas_delivered", gasDelivered);
+  sendNestedJsonV0Obj("water_delivered", waterDelivered);
   httpServer.sendContent("\r\n}\r\n");
 
 } // sendJsonV0Fields()
@@ -624,6 +627,7 @@ void sendJsonV1Fields(const char *Name)
   if (strncmp(Name, "actual", 6)==0)
   {
     sendNestedJsonObj("gas_delivered", gasDelivered, "m3");
+    sendNestedJsonObj("water_delivered", waterDelivered, "m3");
   }
   sendEndJsonObj();
 

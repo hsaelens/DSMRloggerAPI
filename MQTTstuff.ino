@@ -276,7 +276,25 @@ void sendMQTTData()
     }
 
   }
+  //-- if any of the mBus types is 7 (water-meter)
+  if (  (settingMbus1Type == 7)||(settingMbus2Type == 7)
+        ||(settingMbus3Type == 7)||(settingMbus4Type == 7) )
+  {
+    if (settingMQTTtopTopic[strlen(settingMQTTtopTopic)-1] == '/')
+      snprintf(cMsg, sizeof(cMsg), "%s",  settingMQTTtopTopic);
+    else  snprintf(cMsg, sizeof(cMsg), "%s/", settingMQTTtopTopic);
+    strConcat(cMsg, sizeof(cMsg), "water_delivered");
+    if (Verbose1) DebugTf("topicId[%s]\r\n", cMsg);
 
+    createMQTTjsonMessage(mqttBuff, "water_delivered", waterDelivered, "m3");
+    //snprintf(cMsg, sizeof(cMsg), "%s", jsonString.c_str());
+    //DebugTf("topicId[%s] -> [%s]\r\n", topicId, mqttBuff);
+    if (!MQTTclient.publish(cMsg, mqttBuff) )
+    {
+      DebugTf("Error publish(%s) [%s] [%d bytes]\r\n", cMsg, mqttBuff, (strlen(cMsg) + strlen(mqttBuff)));
+    }
+
+  }
 #endif
 
 } // sendMQTTData()

@@ -35,15 +35,15 @@ void sendEndJsonObj()
 } // sendEndJsonObj()
 
 //=======================================================================
-void sendNestedJsonObj(uint8_t recNr, const char *recID, uint8_t slot, float EDT1, float EDT2, float ERT1, float ERT2, float GDT)
+void sendNestedJsonObj(uint8_t recNr, const char *recID, uint8_t slot, float EDT1, float EDT2, float ERT1, float ERT2, float GDT, float WDT)
 {
   char jsonBuff[200] = "";
 
   snprintf(jsonBuff, sizeof(jsonBuff), "%s{\"recnr\": %d, \"recid\": \"%s\", \"slot\": %d,"
            "\"edt1\": %.3f, \"edt2\": %.3f,"
            "\"ert1\": %.3f, \"ert2\": %.3f,"
-           "\"gdt\": %.3f}"
-           , objSprtr, recNr, recID, slot, EDT1, EDT2, ERT1, ERT2, GDT);
+           "\"gdt\": %.3f, \"wdt\": %.3f}"
+           , objSprtr, recNr, recID, slot, EDT1, EDT2, ERT1, ERT2, GDT, WDT);
 
   httpServer.sendContent(jsonBuff);
   sprintf(objSprtr, ",\r\n");

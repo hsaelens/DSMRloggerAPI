@@ -333,6 +333,9 @@
       Gas Delivered
       <input type="radio" name="editType" id="MGD" onchange="setEditType('GD')"/>
       &nbsp;&nbsp;
+      Water Delivered
+      <input type="radio" name="editType" id="MWD" onchange="setEditType('WD')"/>
+      &nbsp;&nbsp;
   
   <div id="tabMaanden" class="tabName outer-div" style="display:none">
     <!-- START edit tabMonths -->
