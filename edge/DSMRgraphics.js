@@ -308,7 +308,7 @@ var myWaterChart;
         if (data[i].p_er >= 0) electrData.datasets[1].data[y]  = (data[i].p_er * -1.0).toFixed(3);
       }
       if (data[i].p_gd  >= 0) gasData.datasets[0].data[y]     = (data[i].p_gd * 1000.0).toFixed(0);
-      if (data[i].p_wd  >= 0) waterData.datasets[0].data[y]   = (data[i].p_wd* 1000.0).toFixed(0);
+      if (data[i].p_wd  >= 0) waterData.datasets[0].data[y]   = (data[i].p_wd * 1000.0).toFixed(0);
     } // for i ..
 
   } // copyDataToChart()
@@ -450,19 +450,11 @@ var myWaterChart;
         actLabel = data[i].value;
       }
       
-      if (data[i].name == "power_delivered_l1") 
+      if (data[i].name == "power_delivered")
         actElectrData.datasets[0].data[actPoint]  = (data[i].value).toFixed(3);
-      if (data[i].name == "power_delivered_l2") 
-        actElectrData.datasets[1].data[actPoint]  = (data[i].value).toFixed(3);
-      if (data[i].name == "power_delivered_l3") 
-        actElectrData.datasets[2].data[actPoint]  = (data[i].value).toFixed(3);
-      if (data[i].name == "power_returned_l1")  
+      if (data[i].name == "power_returned")
         actElectrData.datasets[3].data[actPoint]  = (data[i].value * -1.0).toFixed(3);
-      if (data[i].name == "power_returned_l2")  
-        actElectrData.datasets[4].data[actPoint]  = (data[i].value * -1.0).toFixed(3);
-      if (data[i].name == "power_returned_l3")  
-        actElectrData.datasets[5].data[actPoint]  = (data[i].value * -1.0).toFixed(3);
-      if (data[i].name == "gas_delivered") 
+      if (data[i].name == "gas_delivered")
       {
         if (actPoint > 0)
               actGasData.datasets[0].data[actPoint] = ((data[i].value - gasDelivered) * 1000.0).toFixed(0);

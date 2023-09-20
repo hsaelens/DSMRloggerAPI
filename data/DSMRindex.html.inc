@@ -112,6 +112,7 @@
             <th style="text-align: right;  border-bottom: 2px solid #ddd;">Energie<br>Verbruik<br>(Watt)</th>
             <th style="text-align: right;  border-bottom: 2px solid #ddd;">Energie<br>Teruglevering<br>(Watt)</th>
             <th style="text-align: right;  border-bottom: 2px solid #ddd;">Gas-<br>verbruik<br>(m3)</th>
+            <th style="text-align: right;  border-bottom: 2px solid #ddd;">Water-<br>verbruik<br>(m3)</th>
         <!--<th style="text-align: right;  border-bottom: 2px solid #ddd;">Kosten</th>-->
           </tr>
         </thead>
@@ -143,6 +144,7 @@
             <th style="text-align: right;  border-bottom: 2px solid #ddd;">Energie<br>Verbruik<br>(Watt)</th>
             <th style="text-align: right;  border-bottom: 2px solid #ddd;">Energie<br>Teruglevering<br>(Watt)</th>
             <th style="text-align: right;  border-bottom: 2px solid #ddd;">Gas-<br>verbruik<br>(m3)</th>
+            <th style="text-align: right;  border-bottom: 2px solid #ddd;">Water-<br>verbruik<br>(m3)</th>
             <th style="text-align: right;  border-bottom: 2px solid #ddd;">Kosten</th>
         </tr>
       </thead>
@@ -176,9 +178,11 @@
             <th align='center' colspan=4>Verbruik</th>
             <th align='center' colspan=4>Opgewekt</th>
             <th align='center' colspan=4>Gasverbruik</th>
+            <th align='center' colspan=4>Waterverbruik</th>
         </tr>
         <tr>
             <th style="text-align: right;  border-bottom: 2px solid #ddd;" width='80px'>Maand</th>
+
             <th style="text-align: center; border-bottom: 2px solid #ddd;" width='50px'>Jaar</th>
             <th style="text-align: right;  border-bottom: 2px solid #ddd;" width='70px'>(kWh)</th>
             <th style="text-align: center; border-bottom: 2px solid #ddd;" width='50px'>Jaar</th>
@@ -189,6 +193,11 @@
             <th style="text-align: center; border-bottom: 2px solid #ddd;" width='50px'>Jaar</th>
             <th style="text-align: right;  border-bottom: 2px solid #ddd;" width='70px'>(kWh)</th>
             
+            <th style="text-align: center; border-bottom: 2px solid #ddd;" width='50px'>Jaar</th>
+            <th style="text-align: right;  border-bottom: 2px solid #ddd;" width='70px'>(m3)</th>
+            <th style="text-align: center; border-bottom: 2px solid #ddd;" width='50px'>Jaar</th>
+            <th style="text-align: right;  border-bottom: 2px solid #ddd;" width='70px'>(m3)</th>
+
             <th style="text-align: center; border-bottom: 2px solid #ddd;" width='50px'>Jaar</th>
             <th style="text-align: right;  border-bottom: 2px solid #ddd;" width='70px'>(m3)</th>
             <th style="text-align: center; border-bottom: 2px solid #ddd;" width='50px'>Jaar</th>
@@ -206,12 +215,14 @@
             <th style="text-align: center; border-bottom: 2px solid #ddd;" width='50px'>Jaar</th>
             <th style="text-align: right;  border-bottom: 2px solid #ddd;" width='70px'>Electra</th>
             <th style="text-align: center; border-bottom: 2px solid #ddd;" width='50px'>Gas</th>
+            <th style="text-align: center; border-bottom: 2px solid #ddd;" width='50px'>Water</th>
             <th style="text-align: center; border-bottom: 2px solid #ddd;" width='50px'>Netw.</th>
             <th style="text-align: right;  border-bottom: 2px solid #ddd;" width='70px'>Totaal</th>
 
             <th style="text-align: center; border-bottom: 2px solid #ddd;" width='50px'>Jaar</th>
             <th style="text-align: right;  border-bottom: 2px solid #ddd;" width='70px'>Electra</th>
             <th style="text-align: center; border-bottom: 2px solid #ddd;" width='50px'>Gas</th>
+            <th style="text-align: center; border-bottom: 2px solid #ddd;" width='50px'>Water</th>
             <th style="text-align: center; border-bottom: 2px solid #ddd;" width='50px'>Netw.</th>
             <th style="text-align: right;  border-bottom: 2px solid #ddd;" width='70px'>Totaal</th>
         </tr>
@@ -293,7 +304,7 @@
   <div id="APIdocTab" class="tabName" style="display:none">
     <!-- START APIdocTab Dummy -->
     <div>
-        <span style="font-size: 30px;">API documentie &nbsp; </span>
+        <span style="font-size: 30px;">API documentatie &nbsp; </span>
     </div>
   
   </div>  <!-- END API docs Tab -->
@@ -303,6 +314,7 @@
   <div style="margin: 30px;">
     <canvas id="dataChart" style="display: none;" width="900" height="300"></canvas>
     <canvas id="gasChart"  style="display: none;" width="900" height="125"></canvas>
+    <canvas id="waterChart"  style="display: none;" width="900" height="125"></canvas>
   </div>
   </span>
 <!--------------------------------------------------------------------------------------->
@@ -342,7 +354,7 @@
     <br>
       <div id="editMonths" class="inner-div">
       </div> 
-  </div>  <!-- END tabMonthss -->
+  </div>  <!-- END tabMonths -->
 
   </div> <!-- tabMonths -->
   

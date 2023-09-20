@@ -171,6 +171,7 @@ typedef struct
   float     ERT1;
   float     ERT2;
   float     GDT;
+  float     WDT;
 } dataStruct;
 
 static dataStruct hourData;   // 0 + 1-24

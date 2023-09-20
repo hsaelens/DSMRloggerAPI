@@ -918,20 +918,24 @@
         newCell.appendChild(newText);
         newCell  = newRow.insertCell(3);              // kosten gas
         newCell.appendChild(newText);
-        newCell  = newRow.insertCell(4);              // vast recht
+        newCell  = newRow.insertCell(4);              // kosten water
         newCell.appendChild(newText);
-        newCell  = newRow.insertCell(5);              // kosten totaal
+        newCell  = newRow.insertCell(5);              // vast recht
+        newCell.appendChild(newText);
+        newCell  = newRow.insertCell(6);              // kosten totaal
         newCell.appendChild(newText);
 
-        newCell  = newRow.insertCell(6);              // jaar
+        newCell  = newRow.insertCell(7);              // jaar
         newCell.appendChild(newText);
-        newCell  = newRow.insertCell(7);              // kosten electra
+        newCell  = newRow.insertCell(8);              // kosten electra
         newCell.appendChild(newText);
-        newCell  = newRow.insertCell(8);              // kosten gas
+        newCell  = newRow.insertCell(9);              // kosten gas
         newCell.appendChild(newText);
-        newCell  = newRow.insertCell(9);              // vast recht
+        newCell  = newRow.insertCell(10);             // kosten water
         newCell.appendChild(newText);
-        newCell  = newRow.insertCell(10);              // kosten totaal
+        newCell  = newRow.insertCell(11);              // vast recht
+        newCell.appendChild(newText);
+        newCell  = newRow.insertCell(12);              // kosten totaal
         newCell.appendChild(newText);
       }
       var mmNr = parseInt(data[i].recid.substring(2,4), 10);
@@ -947,27 +951,31 @@
       tableCells[3].style.textAlign = "right";
       tableCells[3].innerHTML = (data[i].costs_g *1).toFixed(2);            // kosten gas
       tableCells[4].style.textAlign = "right";
-      tableCells[4].innerHTML = (data[i].costs_nw *1).toFixed(2);           // netw kosten
+      tableCells[4].innerHTML = (data[i].costs_w *1).toFixed(2);            // kosten water
       tableCells[5].style.textAlign = "right";
-      tableCells[5].style.fontWeight = 'bold';
-      tableCells[5].innerHTML = "€ " + (data[i].costs_tt *1).toFixed(2);    // kosten totaal
+      tableCells[5].innerHTML = (data[i].costs_nw *1).toFixed(2);           // netw kosten
+      tableCells[6].style.textAlign = "right";
+      tableCells[6].style.fontWeight = 'bold';
+      tableCells[6].innerHTML = "€ " + (data[i].costs_tt *1).toFixed(2);    // kosten totaal
       //--- omdat de actuele maand net begonnen kan zijn tellen we deze
       //--- niet mee, maar tellen we de laatste maand van de voorgaand periode
       if (i > 0)
             totalCost += data[i].costs_tt;
       else  totalCost += data[i+12].costs_tt;
 
-      tableCells[6].style.textAlign = "center";
-      tableCells[6].innerHTML = "20"+data[i+12].recid.substring(0,2);         // jaar
-      tableCells[7].style.textAlign = "right";
-      tableCells[7].innerHTML = (data[i+12].costs_e *1).toFixed(2);           // kosten electra
+      tableCells[7].style.textAlign = "center";
+      tableCells[7].innerHTML = "20"+data[i+12].recid.substring(0,2);         // jaar
       tableCells[8].style.textAlign = "right";
-      tableCells[8].innerHTML = (data[i+12].costs_g *1).toFixed(2);           // kosten gas
+      tableCells[8].innerHTML = (data[i+12].costs_e *1).toFixed(2);           // kosten electra
       tableCells[9].style.textAlign = "right";
-      tableCells[9].innerHTML = (data[i+12].costs_nw *1).toFixed(2);          // netw kosten
+      tableCells[9].innerHTML = (data[i+12].costs_g *1).toFixed(2);           // kosten gas
       tableCells[10].style.textAlign = "right";
-      tableCells[10].style.fontWeight = 'bold';
-      tableCells[10].innerHTML = "€ " + (data[i+12].costs_tt *1).toFixed(2);  // kosten totaal
+      tableCells[10].innerHTML = (data[i+12].costs_w *1).toFixed(2);          // kosten water
+      tableCells[11].style.textAlign = "right";
+      tableCells[11].innerHTML = (data[i+12].costs_nw *1).toFixed(2);          // netw kosten
+      tableCells[12].style.textAlign = "right";
+      tableCells[12].style.fontWeight = 'bold';
+      tableCells[12].innerHTML = "€ " + (data[i+12].costs_tt *1).toFixed(2);  // kosten totaal
       totalCost_1 += data[i+12].costs_tt;
 
     };
@@ -2172,7 +2180,8 @@ http://DSMR-API.local/api/v1/dev/settings</pre>", false);
           ,[ "uptime_secs",               "Up Time in Seconds" ]
           ,[ "reboots",                   "Aantal keer opnieuw opgestart" ]
           ,[ "lastreset",                 "Laatste Reset reden" ]
-          
+          ,[ "water_delivered",           "Water gebruikt" ]
+          ,[ "timestamp",                 "Timestamp" ]
                         ];
 
 /*
